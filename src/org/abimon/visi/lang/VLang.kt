@@ -101,3 +101,16 @@ fun <T, V> Map<Pair<T, T>, V>.getPair(t: T): Pair<T, T>? {
 fun <T, V> Map<Pair<T, T>, V>.getOther(t: T): T? {
     return (keys.firstOrNull { pair -> pair.first == t } ?: return (keys.firstOrNull { pair -> pair.second == t } ?: return null).first).second
 }
+
+fun <T, V> Map<T, V>.getForValue(v: V): T? = keys.filter { key -> get(key) == v }.firstOrNull()
+
+fun <T> List<T>.shuffle(): List<T> {
+    val list = ArrayList<T>()
+    val copyList = ArrayList<T>(this)
+    val rng = Random()
+
+    while(copyList.size > 0)
+        list.add(copyList.removeAt(rng.nextInt(copyList.size)))
+
+    return list
+}
