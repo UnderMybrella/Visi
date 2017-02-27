@@ -116,4 +116,12 @@ fun <T> List<T>.shuffle(): List<T> {
 fun <T> List<T>.random(rng: Random = Random()): T = get(rng.nextInt(size))
 fun <T> Array<T>.random(rng: Random = Random()): T = get(rng.nextInt(size))
 
+fun <T> MutableList<T>.remove(predicate: (T) -> Boolean): T? {
+    val index = indexOfFirst(predicate)
+    if(index == -1)
+        return null
+    return removeAt(index)
+}
+fun <T> MutableList<T>.tryRemove(predicate: (T) -> Boolean): Optional<T> = Optional.ofNullable(remove(predicate))
+
 fun <T> T.toString(toString: (T) -> String): String = toString.invoke(this)
