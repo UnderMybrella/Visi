@@ -51,7 +51,7 @@ operator fun <T> Optional<T>.invoke(): T = get()
 val <T> Optional<T>.isEmpty: Boolean
     get() = !isPresent
 
-fun Runtime.usedMemory(): Long = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())
+fun Runtime.usedMemory(): Long = (totalMemory() - freeMemory())
 
 fun Long.square(): Long = this * this
 fun Int.square(): Long = this.toLong().square()
@@ -70,8 +70,6 @@ fun Long.toBinaryString(): String = java.lang.Long.toBinaryString(this)
 
 fun String.toLong(base: Int): Long = java.lang.Long.parseLong(this, base)
 fun String.toFloat(base: Int): Float = java.lang.Float.intBitsToFloat(java.lang.Long.parseLong(this, base).toInt())
-
-fun <T> Optional<T>.populateWithEmpty(int: Int): Optional<T> = Optional.empty()
 
 fun setHeadless() = System.setProperty("java.awt.headless", "true")
 
@@ -114,3 +112,8 @@ fun <T> List<T>.shuffle(): List<T> {
 
     return list
 }
+
+fun <T> List<T>.random(rng: Random = Random()): T = get(rng.nextInt(size))
+fun <T> Array<T>.random(rng: Random = Random()): T = get(rng.nextInt(size))
+
+fun <T> T.toString(toString: (T) -> String): String = toString.invoke(this)
