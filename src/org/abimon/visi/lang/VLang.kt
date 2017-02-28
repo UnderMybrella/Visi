@@ -1,6 +1,7 @@
 package org.abimon.visi.lang
 
 import java.util.*
+import kotlin.reflect.KClass
 
 enum class StringGroup(val start: String, val end: String) {
         SPEECH("\"", "\""),
@@ -123,5 +124,7 @@ fun <T> MutableList<T>.remove(predicate: (T) -> Boolean): T? {
     return removeAt(index)
 }
 fun <T> MutableList<T>.tryRemove(predicate: (T) -> Boolean): Optional<T> = Optional.ofNullable(remove(predicate))
+
+fun <T: Enum<*>> KClass<T>.isValue(name: String): Boolean = java.enumConstants.map { enum -> enum.name }.any { enumName -> enumName.toUpperCase() == name.toUpperCase()}
 
 fun <T> T.toString(toString: (T) -> String): String = toString.invoke(this)

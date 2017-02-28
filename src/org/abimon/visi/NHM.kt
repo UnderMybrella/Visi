@@ -1,11 +1,12 @@
 package org.abimon.visi
 
 import org.abimon.visi.io.check
-import org.abimon.visi.io.errPrintln
 import org.abimon.visi.io.println
 import org.abimon.visi.lang.*
 import java.io.File
 import java.io.FileInputStream
+
+enum class EnumTest { A, B, C }
 
 fun main(args: Array<String>) {
     println(FileInputStream(File("Visi.iml")).check(FileInputStream(File("Visi.iml"))))
@@ -16,4 +17,6 @@ fun main(args: Array<String>) {
     Kilogram(3.14).toPounds().println()
     Kilogram(1.101).toOunces().println()
     Kilogram(1.101).toPounds().toOunces().println()
+
+    println(EnumTest::class.isValue("E"))
 }
