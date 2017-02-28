@@ -127,4 +127,6 @@ fun <T> MutableList<T>.tryRemove(predicate: (T) -> Boolean): Optional<T> = Optio
 
 fun <T: Enum<*>> KClass<T>.isValue(name: String): Boolean = java.enumConstants.map { enum -> enum.name }.any { enumName -> enumName.toUpperCase() == name.toUpperCase()}
 
+fun <T> Array<T>.copyFrom(index: Int): Array<T> = copyOfRange(index, size)
+
 fun <T> T.toString(toString: (T) -> String): String = toString.invoke(this)
