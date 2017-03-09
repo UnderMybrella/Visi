@@ -1,5 +1,7 @@
 package org.abimon.visi.lang
 
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -132,3 +134,9 @@ fun <T> Array<T>.copyFrom(index: Int): Array<T> = copyOfRange(index, size)
 fun <T> T.toString(toString: (T) -> String): String = toString.invoke(this)
 
 fun <T> Iterable<T>.firstOrEmpty(predicate: (T) -> Boolean): Optional<T> = firstOrNull(predicate)?.asOptional() ?: Optional.empty()
+
+fun Throwable.exportStackTrace(): String {
+    val baos = ByteArrayOutputStream()
+    printStackTrace(PrintStream(baos, true, Charsets.UTF_8.name()))
+    return String(baos.toByteArray(), Charsets.UTF_8)
+}
