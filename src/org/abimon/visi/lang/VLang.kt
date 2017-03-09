@@ -130,3 +130,5 @@ fun <T: Enum<*>> KClass<T>.isValue(name: String): Boolean = java.enumConstants.m
 fun <T> Array<T>.copyFrom(index: Int): Array<T> = copyOfRange(index, size)
 
 fun <T> T.toString(toString: (T) -> String): String = toString.invoke(this)
+
+fun <T> Iterable<T>.firstOrEmpty(predicate: (T) -> Boolean): Optional<T> = firstOrNull(predicate)?.asOptional() ?: Optional.empty()
