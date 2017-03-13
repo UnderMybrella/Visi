@@ -106,3 +106,24 @@ interface Poolable<out T> {
 
     operator fun invoke(): T = get()
 }
+
+class PoolableObject<out T>(val obj: T) : Poolable<T> {
+    var inUse = false
+
+    override fun get(): T = synchronized(obj as Any) { obj }
+
+    override fun isFree(): Boolean = !inUse
+
+    fun use(run: (T) -> Unit) {
+        inUse = true
+
+        try {
+            synchronized(obj as Any) {
+                run(obj)
+            }
+        }
+        finally {
+            inUse = false
+        }
+    }
+}
