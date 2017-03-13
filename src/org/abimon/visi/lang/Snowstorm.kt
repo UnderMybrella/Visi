@@ -8,7 +8,7 @@ import java.net.UnknownHostException
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.HashMap
+import java.util.*
 import java.util.function.Supplier
 
 /**
@@ -25,7 +25,7 @@ import java.util.function.Supplier
  * *          configured machine id - 10 bits - gives us up to 1024 machines
  * *          sequence number - 12 bits - rolls over every 4096 per machine (with protection to avoid rollover in the same ms)
  */
-class Snowflake constructor(private val twepoch: Long = Snowflake.defaultEpoch) : Supplier<String> {
+class Snowstorm constructor(private val twepoch: Long = Snowstorm.defaultEpoch) : Supplier<String> {
 
     //   id format  =>
     //   timestamp |datacenter | sequence
@@ -106,18 +106,17 @@ class Snowflake constructor(private val twepoch: Long = Snowflake.defaultEpoch) 
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), ZoneId.systemDefault())
     }
 
-    companion object {
-
+    companion object WeatherMap {
         private val defaultEpoch = 1288834974657L
 
-        private val snowstorms = HashMap<Long, Snowflake>()
+        private val snowstorms = HashMap<Long, Snowstorm>()
 
-        val instance: Snowflake
+        val instance: Snowstorm
             get() = getInstance(defaultEpoch)
 
-        fun getInstance(epoch: Long): Snowflake {
+        fun getInstance(epoch: Long): Snowstorm {
             if (!snowstorms.containsKey(epoch))
-                snowstorms.put(epoch, Snowflake(epoch))
+                snowstorms.put(epoch, Snowstorm(epoch))
             return snowstorms[epoch]!!
         }
     }
