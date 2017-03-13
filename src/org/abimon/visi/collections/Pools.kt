@@ -80,9 +80,10 @@ class Pool<T>(val poolSize: Int = -1) {
      * Gets the first available [Poolable] instance, or adds [add] to the pool if there is space. If there is no space and none are free, returns null
      */
     fun getOrAdd(add: () -> Poolable<T>): Poolable<T>? {
-        if(poolables.size >= poolSize)
-            return get()
         synchronized(poolables) {
+            if(poolables.size >= poolSize)
+                return get()
+
             val poolable = poolables.firstOrNull(Poolable<T>::isFree)
             if(poolable == null) {
                 val newPoolable = add()
@@ -93,6 +94,26 @@ class Pool<T>(val poolSize: Int = -1) {
             return poolable
         }
     }
+
+    /**
+     * Gets the first available [Poolable] instance, or adds [add] to the pool if there is space. If there is no space and none are free, wait.
+     */
+    fun getOrAddOrWait(add: () -> Poolable<T>, wait: Long, unit: TimeUnit): Poolable<T>? {
+        synchronized(poolables) {
+            if(poolables.size >= poolSize)
+                return getOrWait(wait, unit)
+
+            val poolable = poolables.firstOrNull(Poolable<T>::isFree)
+            if(poolable == null) {
+                val newPoolable = add()
+                poolables.add(newPoolable)
+                return newPoolable
+            }
+
+            return poolable
+        }
+    }
+
 
     fun getFree(): List<Poolable<T>> = poolables.filter(Poolable<T>::isFree)
 
