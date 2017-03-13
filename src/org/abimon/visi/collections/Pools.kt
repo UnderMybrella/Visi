@@ -98,7 +98,7 @@ class Pool<T>(val poolSize: Int = -1) {
     /**
      * Gets the first available [Poolable] instance, or adds [add] to the pool if there is space. If there is no space and none are free, wait.
      */
-    fun getOrAddOrWait(add: () -> Poolable<T>, wait: Long, unit: TimeUnit): Poolable<T>? {
+    fun getOrAddOrWait(wait: Long, unit: TimeUnit, add: () -> Poolable<T>): Poolable<T> {
         synchronized(poolables) {
             if(poolables.size >= poolSize)
                 return getOrWait(wait, unit)
