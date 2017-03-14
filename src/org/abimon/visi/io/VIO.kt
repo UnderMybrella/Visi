@@ -115,3 +115,10 @@ fun forceError(message: Any?) {
     System.err.println(message)
     System.exit(1)
 }
+
+fun question(message: Any?, answer: (String) -> Boolean): Boolean {
+    print(message)
+    return answer(readLine() ?: "")
+}
+
+fun question(message: Any?, answer: Any?): Boolean = question(message, { input -> input == answer })
