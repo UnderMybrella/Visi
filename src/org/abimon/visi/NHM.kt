@@ -2,6 +2,8 @@ package org.abimon.visi
 
 import org.abimon.visi.collections.Pool
 import org.abimon.visi.collections.PoolableObject
+import org.abimon.visi.image.toBufferedImage
+import org.abimon.visi.image.toPixelList
 import org.abimon.visi.io.check
 import org.abimon.visi.io.println
 import org.abimon.visi.io.question
@@ -55,4 +57,7 @@ fun main(args: Array<String>) {
     bees.sha512Hash().println()
 
     bees.md2Hash().md5Hash().sha1Hash().sha224Hash().sha256Hash().sha384Hash().sha512Hash().println()
+
+    val lineOfBees = File("LineOfBees.png").readBytes().toBufferedImage().toPixelList(false)
+    println(lineOfBees.size)
 }
