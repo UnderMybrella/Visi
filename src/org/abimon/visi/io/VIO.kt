@@ -107,3 +107,11 @@ fun Any?.println() = println(this)
 fun errPrintln(message: Any?) {
     System.err.println(message)
 }
+
+/**
+ * Print an error message, and then shut down the program
+ */
+fun forceError(message: Any?) {
+    System.err.println(message)
+    System.exit(1)
+}

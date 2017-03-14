@@ -3,6 +3,7 @@ package org.abimon.visi
 import org.abimon.visi.collections.Pool
 import org.abimon.visi.collections.PoolableObject
 import org.abimon.visi.io.check
+import org.abimon.visi.io.forceError
 import org.abimon.visi.io.println
 import org.abimon.visi.lang.*
 import java.io.File
@@ -39,4 +40,8 @@ fun main(args: Array<String>) {
     println(pool.getFree().size)
     Thread.sleep(10000)
     println(pool.getFree().size)
+
+    forceError("Shutdown!")
+
+    println("Shutdown")
 }

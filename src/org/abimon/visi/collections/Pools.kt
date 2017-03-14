@@ -114,7 +114,6 @@ class Pool<T>(val poolSize: Int = -1) {
         }
     }
 
-
     fun getFree(): List<Poolable<T>> = poolables.filter(Poolable<T>::isFree)
 
     fun retire(poolable: Poolable<T>): Boolean = poolables.remove(poolable)
