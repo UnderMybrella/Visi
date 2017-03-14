@@ -140,3 +140,11 @@ fun Throwable.exportStackTrace(): String {
     printStackTrace(PrintStream(baos, true, Charsets.UTF_8.name()))
     return String(baos.toByteArray(), Charsets.UTF_8)
 }
+
+/** Time an action in ms */
+fun time(action: () -> Unit): Long {
+    val start = System.currentTimeMillis()
+    action()
+    val stop = System.currentTimeMillis()
+    return stop - start
+}
