@@ -22,3 +22,14 @@ fun <K, V> HashMap<K, V>.flush(): HashMap<K, V> {
 }
 
 fun <T> List<T>.random(): T = this[Random().nextInt(size)]
+
+fun <T> Iterable<T>.coerceAtMost(size: Int): List<T> {
+    val list = ArrayList<T>()
+    for(element in this) {
+        list.add(element)
+        if(list.size >= size)
+            break
+    }
+
+    return list
+}
