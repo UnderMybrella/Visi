@@ -1,10 +1,11 @@
 package org.abimon.visi.io
 
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.InputStream
-import java.io.OutputStream
+import java.io.*
+import java.nio.file.Files
 import java.util.*
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 fun InputStream.readPartialBytes(len: Int, bufferSize: Int = 8192): ByteArray {
     val baos = ByteArrayOutputStream()
@@ -88,15 +89,19 @@ fun InputStream.skipBytes(bytes: Long): InputStream {
     return this
 }
 
-fun File.iterate(includeDirs: Boolean = false): LinkedList<File> {
+fun File.iterate(includeDirs: Boolean = false, ignoreSymlinks: Boolean = true, filters: Array<FileFilter> = arrayOf()): LinkedList<File> {
     val files = LinkedList<File>()
 
     if (isDirectory && listFiles() != null)
         for (f in listFiles()!!) {
+            if(Files.isSymbolicLink(f.toPath()) && ignoreSymlinks)
+                continue
+            if(filters.any { filter -> !filter.accept(f) })
+                continue
             if (includeDirs || f.isFile)
                 files.add(f)
             if (f.isDirectory)
-                files.addAll(f.iterate(includeDirs))
+                files.addAll(f.iterate(includeDirs, ignoreSymlinks, filters))
         }
 
     return files
@@ -122,3 +127,20 @@ fun question(message: Any?, answer: (String) -> Boolean): Boolean {
 }
 
 fun question(message: Any?, answer: Any?): Boolean = question(message, { input -> input == answer })
+
+fun iterateAll(): List<File> {
+    val executor = Executors.newFixedThreadPool(1024)
+    val allFiles = ConcurrentLinkedQueue<File>()
+
+    File.listRoots().forEach { root ->
+        root.listFiles().forEach { dir ->
+            executor.submit {
+                allFiles.addAll(dir.iterate(true))
+            }
+        }
+    }
+
+    executor.awaitTermination(1, TimeUnit.HOURS)
+
+    return allFiles.toList()
+}
