@@ -141,6 +141,14 @@ fun Throwable.exportStackTrace(): String {
     return String(baos.toByteArray(), Charsets.UTF_8)
 }
 
+fun <T: Any> KClass<T>.build(): ClassBuilder<T> = ClassBuilder(this)
+
+fun <T: Any> KClass<T>.build(begin: ClassBuilder<T>.() -> Unit): ClassBuilder<T> {
+    val builder = ClassBuilder(this)
+    builder.begin()
+    return builder
+}
+
 /** Time an action in ms */
 fun time(action: () -> Unit): Long {
     val start = System.currentTimeMillis()
@@ -148,3 +156,4 @@ fun time(action: () -> Unit): Long {
     val stop = System.currentTimeMillis()
     return stop - start
 }
+

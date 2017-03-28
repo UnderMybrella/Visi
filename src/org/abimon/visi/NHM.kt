@@ -2,6 +2,7 @@ package org.abimon.visi
 
 import org.abimon.visi.collections.Pool
 import org.abimon.visi.collections.PoolableObject
+import org.abimon.visi.collections.coerceAtMost
 import org.abimon.visi.image.toBufferedImage
 import org.abimon.visi.image.toPixelList
 import org.abimon.visi.io.check
@@ -12,8 +13,13 @@ import org.abimon.visi.security.*
 import java.io.File
 import java.io.FileInputStream
 import java.util.*
+import kotlin.collections.HashMap
+import kotlin.reflect.KClass
+import kotlin.reflect.KProperty
 
 enum class EnumTest { A, B, C }
+
+data class BuilderTest(val color: String)
 
 fun main(args: Array<String>) {
     println(FileInputStream(File("Visi.iml")).check(FileInputStream(File("Visi.iml"))))
@@ -46,6 +52,17 @@ fun main(args: Array<String>) {
         println(pool.getFree().size)
     }
 
+    val builderTest = ClassBuilder(BuilderTest::class)
+    builderTest["color"] = "Red"
+    println(builderTest())
+
+//    val allFilesTime = time {
+//        val allFiles = iterateAll()
+//        println(allFiles.count())
+//    }
+//
+//    println("Finding all files on this computer took $allFilesTime ms")
+
     val bees = File("/Users/undermybrella/Bee Movie Script.txt").readText().toByteArray()
 
     bees.md2Hash().println()
@@ -60,4 +77,9 @@ fun main(args: Array<String>) {
 
     val lineOfBees = File("LineOfBees.png").readBytes().toBufferedImage().toPixelList(false)
     println(lineOfBees.size)
+
+    val list = arrayListOf(1, 2, 3, 4, 5, 6, 7, 8)
+    list.println()
+    list.coerceAtMost(4).println()
+    list.coerceAtMost(16).println()
 }
