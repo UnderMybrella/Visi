@@ -13,13 +13,10 @@ import org.abimon.visi.security.*
 import java.io.File
 import java.io.FileInputStream
 import java.util.*
-import kotlin.collections.HashMap
-import kotlin.reflect.KClass
-import kotlin.reflect.KProperty
 
 enum class EnumTest { A, B, C }
 
-data class BuilderTest(val color: String)
+data class BuilderTest(val color: String, val otherColor: String = "")
 
 fun main(args: Array<String>) {
     println(FileInputStream(File("Visi.iml")).check(FileInputStream(File("Visi.iml"))))
