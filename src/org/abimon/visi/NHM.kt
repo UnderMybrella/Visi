@@ -18,6 +18,7 @@ enum class EnumTest { A, B, C }
 
 data class BuilderTest(val color: String, val otherColor: String = "")
 
+@Suppress
 fun main(args: Array<String>) {
     println(FileInputStream(File("Visi.iml")).check(FileInputStream(File("Visi.iml"))))
     println(Kelvin(0).toFahrenheit())
@@ -39,7 +40,7 @@ fun main(args: Array<String>) {
 
         println(pool.getFree().size)
         Thread {
-            (pool.get()!! as PoolableObject).use { obj ->
+            (pool.get()!! as PoolableObject).use {
                 Thread.sleep(10000)
             }
         }.start()
