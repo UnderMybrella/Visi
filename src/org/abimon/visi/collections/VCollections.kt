@@ -33,3 +33,16 @@ fun <T> Iterable<T>.coerceAtMost(size: Int): List<T> {
 
     return list
 }
+
+inline fun <reified T> Iterable<T>.segment(sizes: Int): List<Array<T>> {
+    val list = ArrayList<Array<T>>()
+    val segment = ArrayList<T>()
+    for(element in this) {
+        segment.add(element)
+        if(segment.size >= sizes) {
+            list.add(segment.toTypedArray())
+            segment.clear()
+        }
+    }
+    return list
+}
