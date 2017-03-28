@@ -3,6 +3,7 @@ package org.abimon.visi
 import org.abimon.visi.collections.Pool
 import org.abimon.visi.collections.PoolableObject
 import org.abimon.visi.collections.coerceAtMost
+import org.abimon.visi.collections.segment
 import org.abimon.visi.image.toBufferedImage
 import org.abimon.visi.image.toPixelList
 import org.abimon.visi.io.check
@@ -30,6 +31,8 @@ fun main(args: Array<String>) {
     Kilogram(1.101).toPounds().toOunces().println()
 
     println(EnumTest::class.isValue("E"))
+
+    println(listOf("A", "B", "C", "D", "E", "F", "G", "H").segment(2).map { array -> array.joinToString() }.joinToPrefixedString("|\n", "*\t", ""))
 
     if(question("Do Pool Test? ", "Y")) {
         val pool = Pool<ArrayList<String>>(4)

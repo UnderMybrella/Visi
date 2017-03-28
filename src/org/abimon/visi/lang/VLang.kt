@@ -157,3 +157,5 @@ fun time(action: () -> Unit): Long {
     return stop - start
 }
 
+fun <T> Collection<T>.joinToPrefixedString(separator: String, elementPrefix: String = "", elementSuffix: String = "", transform: T.() -> String = { this.toString() }) = joinToString(separator) { element -> "$elementPrefix${element.transform()}$elementSuffix"}
+
