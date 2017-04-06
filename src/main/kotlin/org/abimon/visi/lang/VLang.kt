@@ -1,9 +1,14 @@
 package org.abimon.visi.lang
 
+import org.abimon.visi.collections.equalsBy
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import java.util.*
+import java.util.regex.PatternSyntaxException
 import kotlin.reflect.KClass
+import kotlin.reflect.KType
+import kotlin.reflect.full.isSuperclassOf
+import kotlin.reflect.full.primaryConstructor
 
 enum class StringGroup(val start: String, val end: String) {
         SPEECH("\"", "\""),
@@ -157,5 +162,23 @@ fun time(action: () -> Unit): Long {
     return stop - start
 }
 
-fun <T> Collection<T>.joinToPrefixedString(separator: String, elementPrefix: String = "", elementSuffix: String = "", transform: T.() -> String = { this.toString() }) = joinToString(separator) { element -> "$elementPrefix${element.transform()}$elementSuffix"}
+fun String.isRegex(): Boolean {
+    try {
+        toRegex()
+        return true
+    }
+    catch(notValid: PatternSyntaxException) {}
 
+    return false
+}
+
+inline fun <reified T: Any> make(vararg args: Any, init: T.() -> Unit): T {
+    var constructor = T::class.primaryConstructor ?: T::class.constructors.firstOrEmpty { con -> con.parameters.size == args.size && con.parameters.equalsBy { index, param -> param.type.canAssign(args[index]::class) } }.orElseThrow { IllegalArgumentException("${T::class.qualifiedName} has no constructors with ${args.size} parameters!") }
+    if(constructor.parameters.isNotEmpty())
+        constructor = T::class.constructors.firstOrEmpty { con -> con.parameters.size == args.size && con.parameters.equalsBy { index, param -> param.type.canAssign(args[index]::class) } }.orElseThrow { IllegalArgumentException("${T::class.qualifiedName} has no constructors with ${args.size} parameters!") }
+    val t = constructor.call(*args)
+    t.init()
+    return t
+}
+
+fun KType.canAssign(clazz: KClass<*>): Boolean = this.classifier is KClass<*> && (this.classifier as KClass<*>).isSuperclassOf(clazz)

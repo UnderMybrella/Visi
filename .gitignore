@@ -13,5 +13,5 @@ hs_err_pid*
 Visi.iml
 out/
 LineOfBees.png
-/src/org/abimon/visi/NHM.kt
+/org/abimon/visi/NHM.kt
 target/

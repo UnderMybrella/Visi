@@ -34,6 +34,10 @@ fun <T> Iterable<T>.coerceAtMost(size: Int): List<T> {
     return list
 }
 
+fun <T> List<T>.equalsBy(equalCheck: (Int, T) -> Boolean): Boolean {
+    return indices.all { equalCheck(it, get(it)) }
+}
+
 inline fun <reified T> Iterable<T>.segment(sizes: Int): List<Array<T>> {
     val list = ArrayList<Array<T>>()
     val segment = ArrayList<T>()
@@ -46,3 +50,5 @@ inline fun <reified T> Iterable<T>.segment(sizes: Int): List<Array<T>> {
     }
     return list
 }
+
+fun <T> Collection<T>.joinToPrefixedString(separator: String, elementPrefix: String = "", elementSuffix: String = "", transform: T.() -> String = { this.toString() }) = joinToString(separator) { element -> "$elementPrefix${element.transform()}$elementSuffix"}

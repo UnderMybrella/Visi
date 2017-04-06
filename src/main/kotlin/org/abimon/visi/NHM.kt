@@ -1,19 +1,16 @@
 package org.abimon.visi
 
-import org.abimon.visi.collections.Pool
-import org.abimon.visi.collections.PoolableObject
 import org.abimon.visi.collections.coerceAtMost
+import org.abimon.visi.collections.joinToPrefixedString
 import org.abimon.visi.collections.segment
 import org.abimon.visi.image.toBufferedImage
 import org.abimon.visi.image.toPixelList
 import org.abimon.visi.io.check
 import org.abimon.visi.io.println
-import org.abimon.visi.io.question
 import org.abimon.visi.lang.*
 import org.abimon.visi.security.*
 import java.io.File
 import java.io.FileInputStream
-import java.util.*
 
 enum class EnumTest { A, B, C }
 
@@ -21,6 +18,11 @@ data class BuilderTest(val color: String, val otherColor: String = "")
 
 @Suppress
 fun main(args: Array<String>) {
+
+    make<ArrayList<String>> {
+        add("AJD")
+    }.println()
+
     println(FileInputStream(File("Visi.iml")).check(FileInputStream(File("Visi.iml"))))
     println(Kelvin(0).toFahrenheit())
     Millimetre(1392).toCentimetres().println()
@@ -34,24 +36,24 @@ fun main(args: Array<String>) {
 
     println(listOf("A", "B", "C", "D", "E", "F", "G", "H").segment(2).map { array -> array.joinToString() }.joinToPrefixedString("|\n", "*\t", ""))
 
-    if(question("Do Pool Test? ", "Y")) {
-        val pool = Pool<ArrayList<String>>(4)
-        pool.add(PoolableObject(ArrayList<String>()))
-        pool.add(PoolableObject(ArrayList<String>()))
-        pool.add(PoolableObject(ArrayList<String>()))
-        pool.add(PoolableObject(ArrayList<String>()))
-
-        println(pool.getFree().size)
-        Thread {
-            (pool.get()!! as PoolableObject).use {
-                Thread.sleep(10000)
-            }
-        }.start()
-        Thread.sleep(1000)
-        println(pool.getFree().size)
-        Thread.sleep(10000)
-        println(pool.getFree().size)
-    }
+//    if(question("Do Pool Test? ", "Y")) {
+//        val pool = Pool<ArrayList<String>>(4)
+//        pool.add(PoolableObject(ArrayList<String>()))
+//        pool.add(PoolableObject(ArrayList<String>()))
+//        pool.add(PoolableObject(ArrayList<String>()))
+//        pool.add(PoolableObject(ArrayList<String>()))
+//
+//        println(pool.getFree().size)
+//        Thread {
+//            (pool.get()!! as PoolableObject).use {
+//                Thread.sleep(10000)
+//            }
+//        }.start()
+//        Thread.sleep(1000)
+//        println(pool.getFree().size)
+//        Thread.sleep(10000)
+//        println(pool.getFree().size)
+//    }
 
     val builderTest = ClassBuilder(BuilderTest::class)
     builderTest["color"] = "Red"
