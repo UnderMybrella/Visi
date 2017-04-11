@@ -59,6 +59,10 @@ operator fun <T> Optional<T>.invoke(): T = get()
 val <T> Optional<T>.isEmpty: Boolean
     get() = !isPresent
 
+/** Returns this optional if a value is present, or the optional returned by the provided function if empty. */
+fun <T> Optional<T>.orElseMaybe(opt: () -> Optional<T>): Optional<T> = if(this.isPresent) this else opt()
+fun <T> Optional<T>.orElseMaybe(opt: Optional<T>): Optional<T> = if(this.isPresent) this else opt
+
 fun Runtime.usedMemory(): Long = (totalMemory() - freeMemory())
 
 fun Long.square(): Long = this * this
@@ -80,7 +84,7 @@ fun <T: Enum<*>> KClass<T>.isValue(name: String): Boolean = java.enumConstants.m
 
 fun <T> T.toString(toString: (T) -> String): String = toString.invoke(this)
 
-fun <T> Iterable<T>.firstOrEmpty(predicate: (T) -> Boolean): Optional<T> = firstOrNull(predicate)?.asOptional() ?: Optional.empty()
+fun <T> Iterable<T>.firstOrEmpty(predicate: (T) -> Boolean = { true }): Optional<T> = firstOrNull(predicate)?.asOptional() ?: Optional.empty()
 
 fun Throwable.exportStackTrace(): String {
     val baos = ByteArrayOutputStream()
