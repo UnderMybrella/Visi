@@ -69,11 +69,6 @@ fun Byte.square(): Int = this * this
 fun Double.square(): Double = this * this
 fun Float.square(): Float = this * this
 
-fun ByteArray.toArrayString(): String = Arrays.toString(this)
-fun BooleanArray.toArrayString(): String = Arrays.toString(this)
-
-fun Array<*>.toArrayString(): String = Arrays.toString(this)
-
 fun Long.toBinaryString(): String = java.lang.Long.toBinaryString(this)
 
 fun String.toLong(base: Int): Long = java.lang.Long.parseLong(this, base)
@@ -81,60 +76,7 @@ fun String.toFloat(base: Int): Float = java.lang.Float.intBitsToFloat(java.lang.
 
 fun setHeadless() = System.setProperty("java.awt.headless", "true")
 
-fun <T, U, V> Map<Pair<T, U>, V>.containsFirstPair(t: T): Boolean = keys.any { pair -> pair.first == t }
-fun <T, U, V> Map<Pair<T, U>, V>.getFirstOfPair(t: T): V? {
-    return get(keys.firstOrNull { pair -> pair.first == t } ?: return null)
-}
-fun <T, U, V> Map<Pair<T, U>, V>.getSecondPair(t: T): U? {
-    return (keys.firstOrNull { pair -> pair.first == t } ?: return null).second
-}
-
-fun <T, U, V> Map<Pair<T, U>, V>.containsSecondPair(u: U): Boolean = keys.any { pair -> pair.second == u }
-fun <T, U, V> Map<Pair<T, U>, V>.getSecondOfPair(u: U): V? {
-    return get(keys.firstOrNull { pair -> pair.second == u } ?: return null)
-}
-fun <T, U, V> Map<Pair<T, U>, V>.getFirstPair(u: U): T? {
-    return (keys.firstOrNull { pair -> pair.second == u } ?: return null).first
-}
-
-fun <T, V> Map<Pair<T, T>, V>.contains(t: T): Boolean = keys.any { pair -> pair.first == t || pair.second == t}
-fun <T, V> Map<Pair<T, T>, V>.getFirst(t: T): V? {
-    return get(keys.firstOrNull { pair -> pair.first == t || pair.second == t } ?: return null)
-}
-fun <T, V> Map<Pair<T, T>, V>.getPair(t: T): Pair<T, T>? {
-    return (keys.firstOrNull { pair -> pair.first == t || pair.second == t } ?: return null)
-}
-fun <T, V> Map<Pair<T, T>, V>.getOther(t: T): T? {
-    return (keys.firstOrNull { pair -> pair.first == t } ?: return (keys.firstOrNull { pair -> pair.second == t } ?: return null).first).second
-}
-
-fun <T, V> Map<T, V>.getForValue(v: V): T? = keys.filter { key -> get(key) == v }.firstOrNull()
-
-fun <T> List<T>.shuffle(): List<T> {
-    val list = ArrayList<T>()
-    val copyList = ArrayList<T>(this)
-    val rng = Random()
-
-    while(copyList.size > 0)
-        list.add(copyList.removeAt(rng.nextInt(copyList.size)))
-
-    return list
-}
-
-fun <T> List<T>.random(rng: Random = Random()): T = get(rng.nextInt(size))
-fun <T> Array<T>.random(rng: Random = Random()): T = get(rng.nextInt(size))
-
-fun <T> MutableList<T>.remove(predicate: (T) -> Boolean): T? {
-    val index = indexOfFirst(predicate)
-    if(index == -1)
-        return null
-    return removeAt(index)
-}
-fun <T> MutableList<T>.tryRemove(predicate: (T) -> Boolean): Optional<T> = Optional.ofNullable(remove(predicate))
-
 fun <T: Enum<*>> KClass<T>.isValue(name: String): Boolean = java.enumConstants.map { enum -> enum.name }.any { enumName -> enumName.toUpperCase() == name.toUpperCase()}
-
-fun <T> Array<T>.copyFrom(index: Int): Array<T> = copyOfRange(index, size)
 
 fun <T> T.toString(toString: (T) -> String): String = toString.invoke(this)
 
@@ -171,6 +113,9 @@ fun String.isRegex(): Boolean {
 
     return false
 }
+
+fun Int.plural(singular: String, plural: String = "${singular}s") = if(this == 1 || this == -1) "$this $singular" else "$this $plural"
+fun Long.plural(singular: String, plural: String = "${singular}s") = if(this == 1L || this == -1L) "$this $singular" else "$this $plural"
 
 inline fun <reified T: Any> make(vararg args: Any, init: T.() -> Unit): T {
     var constructor = T::class.primaryConstructor ?: T::class.constructors.firstOrEmpty { con -> con.parameters.size == args.size && con.parameters.equalsBy { index, param -> param.type.canAssign(args[index]::class) } }.orElseThrow { IllegalArgumentException("${T::class.qualifiedName} has no constructors with ${args.size} parameters!") }

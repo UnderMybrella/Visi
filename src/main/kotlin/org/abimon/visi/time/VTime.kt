@@ -1,6 +1,7 @@
 package org.abimon.visi.time
 
-import org.abimon.visi.lang.numberOfOccurences
+import org.abimon.visi.collections.toSequentialString
+import org.abimon.visi.lang.plural
 import java.time.*
 
 data class TimeDifference(val years: Long, val months: Long, val days: Long, val hours: Long, val minutes: Long, val seconds: Long) {
@@ -8,22 +9,20 @@ data class TimeDifference(val years: Long, val months: Long, val days: Long, val
     override fun toString(): String = format()
 
     fun format(doYears: Boolean = true, doMonths: Boolean = true, doDays: Boolean = true, doHours: Boolean = true, doMinutes: Boolean = true, doSeconds: Boolean = true): String {
-        var str = ""
+        val components = ArrayList<String>()
         if(years > 0 && doYears)
-            str += "$years year${if(years == 1L) "" else "s"}, "
+            components.add(years.plural("year"))
         if(months > 0 && doMonths)
-            str += "$months month${if(months == 1L) "" else "s"}, "
+            components.add(months.plural("month"))
         if(days > 0 && doDays)
-            str += "$days day${if(days == 1L) "" else "s"}, "
+            components.add(days.plural("day"))
         if(hours > 0 && doHours)
-            str += "$hours hour${if(hours == 1L) "" else "s"}, "
+            components.add(hours.plural("hour"))
         if(minutes > 0 && doMinutes)
-            str += "$minutes minute${if(minutes == 1L) "" else "s"}, "
+            components.add(minutes.plural("minute"))
         if(seconds > 0 && doSeconds)
-            str += "$seconds second${if(seconds == 1L) "" else "s"}, "
-        if(str.numberOfOccurences(", ") == 1)
-            return str.substringBeforeLast(", ")
-        return "${str.substringBeforeLast(", ").substringBeforeLast(", ")} and ${str.substringBeforeLast(", ").substringAfterLast(", ")}"
+            components.add(seconds.plural("second"))
+        return components.toSequentialString(", ", " and ")
     }
 }
 
