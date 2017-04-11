@@ -1,7 +1,7 @@
 package org.abimon.visi.lang
 
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
 internal class VLangKtTest {
     @Test
@@ -17,6 +17,6 @@ internal class VLangKtTest {
         )
 
         for((num, expected) in testing)
-            Assertions.assertEquals(num.plural(singular, plural), "$num $expected")
+            assertEquals(num.plural(singular, plural), "$num $expected")
     }
 }

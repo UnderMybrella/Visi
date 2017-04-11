@@ -1,10 +1,9 @@
 package org.abimon.visi.collections
 
-import org.junit.jupiter.api.Assertions.assertArrayEquals
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
+import org.junit.Assert.*
+import org.junit.Test
 
-internal class VCollectionsKtTest {
+class VCollectionsKtTest {
 
     @Test
     fun toArrayString() {
