@@ -42,8 +42,9 @@ abstract class SuperNumber: Number(), Comparable<Number> {
         var radix = r
         if (radix < Character.MIN_RADIX || radix > Character.MAX_RADIX)
             radix = 10
-        val buf = CharArray(65)
-        var charPos = 64
+        val bits = twosCompliment().size
+        val buf = CharArray(bits + 1)
+        var charPos = bits
         val negative = i < 0
 
         if (!negative) {
@@ -51,7 +52,6 @@ abstract class SuperNumber: Number(), Comparable<Number> {
         }
 
         while (i <= -radix) {
-            println(System.currentTimeMillis())
             buf[charPos--] = digits[(-(i % radix)).toInt()]
             i /= radix
         }
@@ -61,7 +61,7 @@ abstract class SuperNumber: Number(), Comparable<Number> {
             buf[--charPos] = '-'
         }
 
-        return String(buf, charPos, 65 - charPos)
+        return String(buf, charPos, (bits + 1) - charPos)
     }
 
     abstract operator fun div(radix: Number): SuperNumber

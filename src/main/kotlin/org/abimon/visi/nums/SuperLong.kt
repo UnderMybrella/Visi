@@ -1,17 +1,18 @@
 package org.abimon.visi.nums
 
 import java.util.*
-import kotlin.collections.ArrayList
 
 /** Represents numbers between -2^127 to 2^127-1 */
 class SuperLong(): SuperNumber() {
     companion object {
-        val NUM_BITS = 65536
+        val NUM_BITS = 128
         val RANGE = (0 until NUM_BITS)
         val TWOS_RANGE = (1 until NUM_BITS)
 
-        val MIN_VALUE = SuperLong(RANGE.toCollection(ArrayList<Int>(NUM_BITS)).map { index -> index == 0 }.toBooleanArray())
-        val MAX_VALUE = SuperLong(RANGE.toCollection(ArrayList<Int>(NUM_BITS)).map { index -> index != 0 }.toBooleanArray())
+        val LOOKUP = RANGE.reversed().map { index -> Math.pow(2.0, index.toDouble()).toLong() }.toLongArray()
+
+        val MIN_VALUE = SuperLong(RANGE.map { index -> index == 0 }.toBooleanArray())
+        val MAX_VALUE = SuperLong(RANGE.map { index -> index != 0 }.toBooleanArray())
 
         private fun pad(arr: BooleanArray): BooleanArray {
             if(arr.size == NUM_BITS)
@@ -78,6 +79,9 @@ class SuperLong(): SuperNumber() {
         private fun div(num: BooleanArray, divideBy: BooleanArray): Pair<BooleanArray, BooleanArray> {
             if(divideBy.all { !it })
                 throw ArithmeticException("/ by zero")
+            if(num.all { !it })
+                return Pair(BooleanArray(NUM_BITS), BooleanArray(NUM_BITS))
+
             val absNum = abs(num)
             val absRadix = abs(divideBy)
 
@@ -148,7 +152,7 @@ class SuperLong(): SuperNumber() {
     override fun toLong(): Long {
         var numVal = 0L
         val negative = num[0]
-        TWOS_RANGE.filter { index -> index < LONG_LOOKUP.size }.forEach { index -> if(num[index] != negative) numVal = numVal or LONG_LOOKUP[index] } //numVal = numVal or LOOKUP[index]
+        TWOS_RANGE.forEach { index -> if(num[index] != negative) numVal = numVal or LOOKUP[index] } //numVal = numVal or LOOKUP[index]
         if(negative)
             return -(numVal + 1)
         return numVal
@@ -188,6 +192,9 @@ class SuperLong(): SuperNumber() {
 
     override fun unaryMinus(): SuperLong {
         val arr = Arrays.copyOf(num, NUM_BITS)
+
+        if(num.all { !it })
+            return SuperLong(arr)
 
         arr.forEachIndexed { index, bit -> arr[index] = !bit }
 

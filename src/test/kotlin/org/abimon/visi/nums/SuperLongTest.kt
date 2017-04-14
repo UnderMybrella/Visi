@@ -5,7 +5,6 @@ import org.junit.Test
 internal class SuperLongTest {
     @Test
     fun superLong() {
-        println(Long.MAX_VALUE)
-        println(SuperLong.MAX_VALUE)
+        println(SuperLong(Long.MAX_VALUE) + Int.MAX_VALUE + Short.MAX_VALUE)
     }
 }
