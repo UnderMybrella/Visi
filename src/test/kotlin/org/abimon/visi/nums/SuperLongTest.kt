@@ -5,6 +5,8 @@ import org.junit.Test
 internal class SuperLongTest {
     @Test
     fun superLong() {
-        println(SuperLong(Long.MAX_VALUE) + Int.MAX_VALUE + Short.MAX_VALUE)
+        var deckSize = 40
+        val chanceOfExodia = SuperLong(deckSize--) * deckSize-- * deckSize-- * deckSize-- * deckSize
+        println(chanceOfExodia)
     }
 }

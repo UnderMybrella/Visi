@@ -64,8 +64,14 @@ abstract class SuperNumber: Number(), Comparable<Number> {
         return String(buf, charPos, (bits + 1) - charPos)
     }
 
+    abstract operator fun plus(add: Number): SuperNumber
+    abstract operator fun minus(minus: Number): SuperNumber
+    abstract operator fun times(times: Number): SuperNumber
     abstract operator fun div(radix: Number): SuperNumber
     abstract operator fun rem(radix: Number): SuperNumber
     abstract operator fun unaryMinus(): SuperNumber
     abstract override operator fun compareTo(other: Number): Int
+    abstract override fun equals(other: Any?): Boolean
+
+    public operator fun rangeTo(other: SuperNumber): SuperNumberRange = SuperNumberRange(this, other)
 }
