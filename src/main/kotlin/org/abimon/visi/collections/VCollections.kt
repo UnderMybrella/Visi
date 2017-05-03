@@ -104,6 +104,14 @@ inline fun <reified T> Iterable<T>.segment(sizes: Int): List<Array<T>> {
     return list
 }
 
+fun <T> Iterable<T>.pass(passing: (T, T) -> T): T {
+    val list = this.toList()
+    var t: T = list.first()
+    for(i in (1 until list.size))
+        t = passing(t, list[i])
+    return t
+}
+
 fun <T> Collection<T>.joinToPrefixedString(separator: String, elementPrefix: String = "", elementSuffix: String = "", transform: T.() -> String = { this.toString() }) = joinToString(separator) { element -> "$elementPrefix${element.transform()}$elementSuffix"}
 
 fun ByteArray.toArrayString(): String = Arrays.toString(this)
