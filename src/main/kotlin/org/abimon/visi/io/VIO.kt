@@ -25,13 +25,40 @@ fun InputStream.readPartialBytes(len: Int, bufferSize: Int = 8192): ByteArray {
     return baos.toByteArray()
 }
 
+fun InputStream.readChunked(bufferSize: Int = 8192, closeAfter: Boolean = true, processChunk: (ByteArray) -> Unit): Int {
+    val buffer = ByteArray(bufferSize)
+    var read = 0
+    var total = 0
+    var count = 0.toByte()
+
+    while (read > -1) {
+        read = read(buffer)
+        if(read < 0)
+            break
+        if(read == 0) {
+            count++
+            if(count > 3)
+                break
+        }
+
+        processChunk(buffer)
+        total += read
+    }
+
+    if(closeAfter)
+        close()
+
+    return total
+}
+
+
 fun InputStream.readAllBytes(): ByteArray {
     val data = ByteArrayOutputStream()
     writeTo(data)
     return data.toByteArray()
 }
 
-fun InputStream.writeTo(writingTo: OutputStream, bufferSize: Int = 8192, closeAfter: Boolean = false): Int {
+fun InputStream.writeTo(writingTo: OutputStream, bufferSize: Int = 8192, closeAfter: Boolean = true): Int {
     val buffer = ByteArray(bufferSize)
     var read = 0
     var total = 0
