@@ -41,7 +41,7 @@ fun InputStream.readChunked(bufferSize: Int = 8192, closeAfter: Boolean = true, 
                 break
         }
 
-        processChunk(buffer)
+        processChunk(buffer.copyOfRange(0, read))
         total += read
     }
 
