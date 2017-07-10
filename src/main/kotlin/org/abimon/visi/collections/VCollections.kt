@@ -152,3 +152,24 @@ fun <T> Array<T>.toSequentialString(separator: String = ", ", finalSeparator: St
     str += this[size - 1].transform()
     return str
 }
+
+fun byteArrayOf(vararg bytes: Int): ByteArray = bytes.map { it.toByte() }.toByteArray()
+
+infix fun ByteArray.asBase(base: Int): String = this.joinToString(" ") { byte ->
+    when(base) {
+        2 -> "0b${byte.toString(2)}"
+        16 -> "0x${byte.toString(16)}"
+        else -> byte.toString(base)
+    }
+}
+
+infix fun IntArray.asBase(base: Int): String = this.joinToString(" ") { byte ->
+    when(base) {
+        2 -> "0b${byte.toString(2)}"
+        16 -> "0x${byte.toString(16)}"
+        else -> byte.toString(base)
+    }
+}
+
+operator fun <K, V> Map<K, V>.get(v: V): K? = getByValue(v)
+fun <K, V> Map<K, V>.getByValue(v: V): K? = entries.firstOrNull { (_, value) -> value == v }?.key

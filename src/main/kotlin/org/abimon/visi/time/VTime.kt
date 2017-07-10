@@ -1,7 +1,7 @@
 package org.abimon.visi.time
 
 import org.abimon.visi.collections.toSequentialString
-import org.abimon.visi.lang.plural
+import org.abimon.visi.lang.pluralise
 import java.time.*
 
 data class TimeDifference(val years: Long, val months: Long, val days: Long, val hours: Long, val minutes: Long, val seconds: Long) {
@@ -11,17 +11,17 @@ data class TimeDifference(val years: Long, val months: Long, val days: Long, val
     fun format(doYears: Boolean = true, doMonths: Boolean = true, doDays: Boolean = true, doHours: Boolean = true, doMinutes: Boolean = true, doSeconds: Boolean = true): String {
         val components = ArrayList<String>()
         if(years > 0 && doYears)
-            components.add(years.plural("year"))
+            components.add(years.pluralise("year"))
         if(months > 0 && doMonths)
-            components.add(months.plural("month"))
+            components.add(months.pluralise("month"))
         if(days > 0 && doDays)
-            components.add(days.plural("day"))
+            components.add(days.pluralise("day"))
         if(hours > 0 && doHours)
-            components.add(hours.plural("hour"))
+            components.add(hours.pluralise("hour"))
         if(minutes > 0 && doMinutes)
-            components.add(minutes.plural("minute"))
+            components.add(minutes.pluralise("minute"))
         if(seconds > 0 && doSeconds)
-            components.add(seconds.plural("second"))
+            components.add(seconds.pluralise("second"))
         return components.toSequentialString(", ", " and ")
     }
 }

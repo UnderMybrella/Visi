@@ -72,6 +72,7 @@ abstract class SuperNumber: Number(), Comparable<Number> {
     abstract operator fun unaryMinus(): SuperNumber
     abstract override operator fun compareTo(other: Number): Int
     abstract override fun equals(other: Any?): Boolean
+    abstract override fun hashCode(): Int
 
     public operator fun rangeTo(other: SuperNumber): SuperNumberRange = SuperNumberRange(this, other)
 }

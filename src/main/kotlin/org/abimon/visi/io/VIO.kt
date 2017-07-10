@@ -171,3 +171,9 @@ fun iterateAll(): List<File> {
 
     return allFiles.toList()
 }
+
+fun InputStream.read(count: Int): ByteArray {
+    val data = ByteArray(count)
+    val read = read(data)
+    return data.copyOfRange(0, read)
+}

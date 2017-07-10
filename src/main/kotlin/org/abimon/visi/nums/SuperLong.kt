@@ -5,7 +5,7 @@ import java.util.*
 /** Represents numbers between -2^127 to 2^127-1 */
 class SuperLong() : SuperNumber() {
     companion object {
-        val NUM_BITS = 8192
+        val NUM_BITS = 128
         val RANGE = (0 until NUM_BITS)
         val TWOS_RANGE = (1 until NUM_BITS)
 
@@ -254,4 +254,6 @@ class SuperLong() : SuperNumber() {
             return Arrays.equals(twosCompliment(), (other as SuperNumber).twosCompliment())
         return false
     }
+
+    override fun hashCode(): Int = Arrays.hashCode(num)
 }
