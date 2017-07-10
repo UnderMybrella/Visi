@@ -6,80 +6,85 @@ import java.net.URL
 import java.util.function.Supplier
 
 interface DataSource {
-    fun getLocation(): String
-    fun getData(): ByteArray
-    fun getInputStream(): InputStream
-    fun getDataSize(): Long
+    /**
+     * Get an input stream associated with this data source.
+     */
+    val inputStream: InputStream
+    val location: String
+    val data: ByteArray
+    val size: Long
+    
+    fun <T> use(action: (InputStream) -> T): T = inputStream.use(action)
 }
 
 class FileDataSource(val file: File) : DataSource {
+    private var prev: FileInputStream? = null
 
-    override fun getLocation(): String = file.absolutePath
+    override val location: String = file.absolutePath
 
-    override fun getData(): ByteArray = file.readBytes()
+    override val data: ByteArray = file.readBytes()
 
-    override fun getInputStream(): InputStream = FileInputStream(file)
+    override val inputStream: InputStream = run {
+        if (prev != null)
+            prev!!.close()
+        prev = FileInputStream(file)
+        return@run prev!!
+    }
 
-    override fun getDataSize(): Long = file.length()
+    override val size: Long = file.length()
 }
 
 class HTTPDataSource(val url: URL, val userAgent: String) : DataSource {
 
     constructor(url: URL) : this(url, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:44.0) Gecko/20100101 Firefox/44.0")
 
-    override fun getLocation(): String {
-        return url.toExternalForm()
-    }
+    override val location: String = url.toExternalForm()
 
-    override fun getData(): ByteArray {
+    override val data: ByteArray = run {
         val baos = ByteArrayOutputStream()
-        getInputStream().use { it.writeTo(baos, 8192, true) }
-        return baos.toByteArray()
+        use { it.writeTo(baos, 8192, true) }
+        return@run baos.toByteArray()
     }
 
-    override fun getInputStream(): InputStream {
+    override val inputStream: InputStream = run {
         val http = url.openConnection() as HttpURLConnection
         http.requestMethod = "GET"
         http.setRequestProperty("User-Agent", userAgent)
-        return if(http.responseCode < 400) http.inputStream else http.errorStream
+        return@run if(http.responseCode < 400) http.inputStream else http.errorStream
     }
 
-    override fun getDataSize(): Long = getInputStream().available().toLong()
+    override val size: Long = use { it.available().toLong() }
 }
 
-class FunctionalDataSource(val data: Supplier<ByteArray>) : DataSource {
-    override fun getLocation(): String {
-        return "Supplier " + data.toString()
-    }
+class FunctionalDataSource(val dataSupplier: Supplier<ByteArray>) : DataSource {
+    override val location: String = "Supplier " + dataSupplier.toString()
 
-    override fun getData(): ByteArray {
-        return data.get()
-    }
+    override val data: ByteArray = dataSupplier.get()
 
-    override fun getInputStream(): InputStream = ByteArrayInputStream(getData())
+    override val inputStream: InputStream = ByteArrayInputStream(data)
 
-    override fun getDataSize(): Long = getData().size.toLong()
+    override val size: Long = data.size.toLong()
 }
 
-class FunctionDataSource(val data: () -> ByteArray): DataSource {
-    override fun getLocation(): String = data.toString()
+class FunctionDataSource(val dataFunc: () -> ByteArray): DataSource {
+    override val location: String = dataFunc.toString()
 
-    override fun getData(): ByteArray = data.invoke()
+    override val data: ByteArray = dataFunc()
 
-    override fun getInputStream(): InputStream = ByteArrayInputStream(data.invoke())
+    override val inputStream: InputStream = ByteArrayInputStream(dataFunc())
 
-    override fun getDataSize(): Long = data.invoke().size.toLong()
+    override val size: Long = dataFunc().size.toLong()
 
 }
 
 /** One time use */
 class InputStreamDataSource(val stream: InputStream) : DataSource {
-    override fun getLocation(): String = stream.toString()
+    override val location: String = stream.toString()
 
-    override fun getData(): ByteArray = stream.readBytes()
+    override val data: ByteArray = stream.use { it.readBytes() }
 
-    override fun getInputStream(): InputStream = stream
+    override val inputStream: InputStream = stream
 
-    override fun getDataSize(): Long = stream.available().toLong()
+    override val size: Long = stream.use { it.available().toLong() }
 
 }
