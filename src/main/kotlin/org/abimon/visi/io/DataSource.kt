@@ -15,6 +15,7 @@ interface DataSource {
     val size: Long
     
     fun <T> use(action: (InputStream) -> T): T = inputStream.use(action)
+    fun pipe(out: OutputStream): Unit { use { it.writeTo(out) } }
 }
 
 class FileDataSource(val file: File) : DataSource {
@@ -79,6 +80,13 @@ class FunctionDataSource(val dataFunc: () -> ByteArray): DataSource {
     override val size: Long
         get() = dataFunc().size.toLong()
 
+}
+
+class ByteArrayDataSource(override val data: ByteArray): DataSource {
+    override val inputStream: InputStream
+        get() = ByteArrayInputStream(data)
+    override val location: String = "Byte Array $data"
+    override val size: Long = data.size.toLong()
 }
 
 /** One time use */
