@@ -1,6 +1,7 @@
 package org.abimon.visi.lang
 
 import java.util.*
+import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 
 data class StringGroup(val start: String, val end: String) { constructor(pair: Pair<String, String>): this(pair.first, pair.second) }
@@ -45,15 +46,15 @@ fun String.replaceLast(replace: String, replacing: String): String {
 }
 
 fun String.splitOutsideGroup(delimiter: String = "\\s+", cap: Int = 0, group: StringGroup = StringGroups.SPEECH): Array<String> {
-    val strings = LinkedList<String>()
-
-    for (string in split("$delimiter(?=([^\\Q${group.start}\\E]*\\Q${group.start}\\E[^\\Q${group.end}\\E]*\\Q${group.end}\\E)*[^\\Q${group.end}\\E]*$)".toRegex(), cap.coerceAtLeast(0)).toTypedArray()) {
-        var str = string
-        if (str.startsWith("\""))
-            str = str.substring(1)
-        if (str.endsWith("\""))
-            str = str.substring(0, str.length - 1)
-        strings.add(str)
+    val strings = ArrayList<String>()
+    val regex = "${group.start}([^${group.start}${group.end}]*)${group.end}|([^$delimiter]+)"
+    println(regex)
+    val m = Pattern.compile(regex).matcher(this)
+    while (m.find()) {
+        if (m.group(1) != null)
+            strings += m.group(1)
+        else
+            strings += m.group(2)
     }
 
     return strings.toTypedArray()
