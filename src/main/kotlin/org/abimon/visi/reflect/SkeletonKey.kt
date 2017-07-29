@@ -9,6 +9,7 @@ class SkeletonKey<T: Any>(val klass: KClass<out T>, val door: T?) {
     val methods = klass.java.declaredMethods.map { method -> method.apply { isAccessible = true} }.groupBy { method -> method.name }
 
     operator fun get(variable: String): Any? = (properties[variable] ?: throw IllegalArgumentException("No property with the name $variable on $klass")).get(door)
+    operator fun set(variable: String, value: Any?): Any? = (properties[variable] ?: throw IllegalArgumentException("No property with the name $variable on $klass")).set(door, value)
     operator fun invoke(name: String, vararg params: Any?): Any? {
         val method = (methods[name] ?: throw IllegalArgumentException("No function with the name $name on $klass")).firstOrNull { method ->
             method.parameterCount == params.size && method.parameterTypes.filterIndexed { index, parameter ->

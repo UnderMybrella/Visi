@@ -1,6 +1,7 @@
 package org.abimon.visi.collections
 
-import org.junit.Assert.*
+import org.junit.Assert.assertArrayEquals
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class VCollectionsKtTest {
@@ -20,5 +21,11 @@ class VCollectionsKtTest {
     fun toSequentialString() {
         assertEquals("1, 2, and 3", arrayOf(1, 2, 3).toSequentialString())
         assertEquals("1, 2, and 3", listOf(1, 2, 3).toSequentialString())
+    }
+
+    @Test
+    fun pass() {
+        val numArray = arrayListOf(1, 2, 3, 4)
+        println(numArray.pass { one, two -> one + two })
     }
 }

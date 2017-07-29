@@ -2,7 +2,6 @@ package org.abimon.visi.lang
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import java.util.*
 
 internal class VLangKtTest {
     @Test
@@ -18,11 +17,11 @@ internal class VLangKtTest {
         )
 
         for((num, expected) in testing)
-            assertEquals("$num $expected", num.plural(singular, plural))
+            assertEquals("$num $expected", num.pluralise(singular, plural))
     }
 
     @Test
-    fun orElseMaybe() {
-        assertEquals("ABCDEFG", Optional.empty<String>().orElseMaybe { Optional.of("ABCDEFG") }.get())
+    fun brute() {
+        bruteForce(4, "0123456789".map { "$it" }.toTypedArray()) { println(it) }
     }
 }
