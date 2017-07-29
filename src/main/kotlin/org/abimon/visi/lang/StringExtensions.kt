@@ -48,7 +48,6 @@ fun String.replaceLast(replace: String, replacing: String): String {
 fun String.splitOutsideGroup(delimiter: String = "\\s+", cap: Int = 0, group: StringGroup = StringGroups.SPEECH): Array<String> {
     val strings = ArrayList<String>()
     val regex = "${group.start}([^${group.start}${group.end}]*)${group.end}|([^$delimiter]+)"
-    println(regex)
     val m = Pattern.compile(regex).matcher(this)
     while (m.find()) {
         if (m.group(1) != null)
