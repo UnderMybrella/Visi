@@ -11,7 +11,7 @@ import java.security.MessageDigest
 fun ByteArray.hash(algorithm: String): String {
     val md = MessageDigest.getInstance(algorithm)
     val hashBytes = md.digest(this)
-    return BigInteger(1, hashBytes).toString(16)
+    return String.format("%032x", BigInteger(1, hashBytes))
 }
 /** ***Do not use for things like passwords*** */
 fun ByteArray.md2Hash(): String = hash("MD2")
@@ -48,7 +48,7 @@ fun InputStream.hash(algorithm: String): String {
     val md = MessageDigest.getInstance(algorithm)
     readChunked { md.update(it) }
     val hashBytes = md.digest()
-    return BigInteger(1, hashBytes).toString(16)
+    return String.format("%032x", BigInteger(1, hashBytes))
 }
 /** ***Do not use for things like passwords*** */
 fun InputStream.md2Hash(): String = hash("MD2")
