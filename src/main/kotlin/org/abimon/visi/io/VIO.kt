@@ -6,6 +6,7 @@ import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import kotlin.reflect.KClass
 
 fun InputStream.readPartialBytes(len: Int, bufferSize: Int = 8192): ByteArray {
     val baos = ByteArrayOutputStream()
@@ -176,4 +177,17 @@ fun InputStream.read(count: Int): ByteArray {
     val data = ByteArray(count)
     val read = read(data)
     return data.copyOfRange(0, read)
+}
+
+fun loadResource(name: String, resourcesDir: File = File("src${File.separator}main${File.separator}resources${File.separator}")): ByteArray? = Thread.currentThread().stackTrace[2]::class.loadResource(name, resourcesDir)
+fun loadResourceAsStream(name: String, resourcesDir: File = File("src${File.separator}main${File.separator}resources${File.separator}")): InputStream? = Thread.currentThread().stackTrace[2]::class.loadResourceAsStream(name, resourcesDir)
+
+fun KClass<*>.loadResource(name: String, resourcesDir: File = File("src${File.separator}main${File.separator}resources${File.separator}")): ByteArray? {
+    val backup = File(resourcesDir, name)
+    return java.classLoader.getResourceAsStream(name)?.readBytes() ?: (if (backup.exists()) backup.readBytes() else if (File(name).exists()) File(name).readBytes() else null)
+}
+
+fun KClass<*>.loadResourceAsStream(name: String, resourcesDir: File = File("src${File.separator}main${File.separator}resources${File.separator}")): InputStream? {
+    val backup = File(resourcesDir, name)
+    return java.classLoader.getResourceAsStream(name) ?: (if (backup.exists()) FileInputStream(backup) else if (File(name).exists()) FileInputStream(File(name)) else null)
 }
