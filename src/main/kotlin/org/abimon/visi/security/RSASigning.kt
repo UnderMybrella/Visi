@@ -19,6 +19,18 @@ fun ByteArray.sign(privateKey: PrivateKey): ByteArray {
     return signature.sign()
 }
 
+fun ByteArray.sign(privateKey: File): ByteArray {
+    val keyFactory = KeyFactory.getInstance("RSA")
+    val private = keyFactory.generatePrivate(RSAPrivateKeySpec(privateKey.readText()))
+    return sign(private)
+}
+
+fun ByteArray.sign(privateKey: String): ByteArray {
+    val keyFactory = KeyFactory.getInstance("RSA")
+    val private = keyFactory.generatePrivate(RSAPrivateKeySpec(privateKey))
+    return sign(private)
+}
+
 fun ByteArray.verify(signatureData: ByteArray, publicKey: PublicKey): Boolean {
     val signature = Signature.getInstance("SHA1withRSA")
     signature.initVerify(publicKey)
@@ -27,15 +39,15 @@ fun ByteArray.verify(signatureData: ByteArray, publicKey: PublicKey): Boolean {
     return signature.verify(signatureData)
 }
 
-fun ByteArray.sign(privateKey: File): ByteArray {
-    val keyFactory = KeyFactory.getInstance("RSA")
-    val private = keyFactory.generatePrivate(RSAPrivateKeySpec(privateKey.readText()))
-    return sign(private)
-}
-
 fun ByteArray.verify(signatureData: ByteArray, publicKey: File): Boolean {
     val keyFactory = KeyFactory.getInstance("RSA")
     val public = keyFactory.generatePublic(RSAPublicKeySpec(publicKey.readText()))
+    return verify(signatureData, public)
+}
+
+fun ByteArray.verify(signatureData: ByteArray, publicKey: String): Boolean {
+    val keyFactory = KeyFactory.getInstance("RSA")
+    val public = keyFactory.generatePublic(RSAPublicKeySpec(publicKey))
     return verify(signatureData, public)
 }
 
