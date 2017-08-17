@@ -1,6 +1,8 @@
 package org.abimon.visi.security
 
+import org.abimon.visi.io.readChunked
 import java.io.File
+import java.io.InputStream
 import java.security.KeyFactory
 import java.security.PrivateKey
 import java.security.PublicKey
@@ -31,6 +33,26 @@ fun ByteArray.sign(privateKey: String): ByteArray {
     return sign(private)
 }
 
+fun InputStream.sign(privateKey: PrivateKey): ByteArray {
+    val signature = Signature.getInstance("SHA1withRSA")
+    signature.initSign(privateKey)
+    this.readChunked { signature.update(it) }
+
+    return signature.sign()
+}
+
+fun InputStream.sign(privateKey: File): ByteArray {
+    val keyFactory = KeyFactory.getInstance("RSA")
+    val private = keyFactory.generatePrivate(RSAPrivateKeySpec(privateKey.readText()))
+    return sign(private)
+}
+
+fun InputStream.sign(privateKey: String): ByteArray {
+    val keyFactory = KeyFactory.getInstance("RSA")
+    val private = keyFactory.generatePrivate(RSAPrivateKeySpec(privateKey))
+    return sign(private)
+}
+
 fun ByteArray.verify(signatureData: ByteArray, publicKey: PublicKey): Boolean {
     val signature = Signature.getInstance("SHA1withRSA")
     signature.initVerify(publicKey)
@@ -46,6 +68,26 @@ fun ByteArray.verify(signatureData: ByteArray, publicKey: File): Boolean {
 }
 
 fun ByteArray.verify(signatureData: ByteArray, publicKey: String): Boolean {
+    val keyFactory = KeyFactory.getInstance("RSA")
+    val public = keyFactory.generatePublic(RSAPublicKeySpec(publicKey))
+    return verify(signatureData, public)
+}
+
+fun InputStream.verify(signatureData: ByteArray, publicKey: PublicKey): Boolean {
+    val signature = Signature.getInstance("SHA1withRSA")
+    signature.initVerify(publicKey)
+    this.readChunked { signature.update(it) }
+
+    return signature.verify(signatureData)
+}
+
+fun InputStream.verify(signatureData: ByteArray, publicKey: File): Boolean {
+    val keyFactory = KeyFactory.getInstance("RSA")
+    val public = keyFactory.generatePublic(RSAPublicKeySpec(publicKey.readText()))
+    return verify(signatureData, public)
+}
+
+fun InputStream.verify(signatureData: ByteArray, publicKey: String): Boolean {
     val keyFactory = KeyFactory.getInstance("RSA")
     val public = keyFactory.generatePublic(RSAPublicKeySpec(publicKey))
     return verify(signatureData, public)
