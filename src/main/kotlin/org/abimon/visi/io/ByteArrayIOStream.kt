@@ -57,7 +57,7 @@ class ByteArrayIOStream {
     fun read(): Int = buffer[pos++, -1].toInt() and 0xFF
     fun read(bytes: ByteArray): Int {
         for (i in 0 until bytes.size) {
-            if (pos + i >= buffer.size)
+            if (pos + i >= buffer.size || pos + i < 0)
                 return i
             bytes[i] = buffer[pos++]
         }
@@ -66,7 +66,7 @@ class ByteArrayIOStream {
     }
     fun read(bytes: ByteArray, off: Int, len: Int): Int {
         for (i in 0 until len) {
-            if (pos + i >= buffer.size || i + off >= bytes.size)
+            if (pos + i >= buffer.size || i + off >= bytes.size || pos + i < 0)
                 return i
             bytes[i + off] = buffer[pos++]
         }
