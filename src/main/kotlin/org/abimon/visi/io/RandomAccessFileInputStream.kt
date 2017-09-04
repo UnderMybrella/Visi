@@ -23,4 +23,8 @@ open class RandomAccessFileInputStream(file: File): InputStream() {
     override fun reset() {
         randomAccessFile.seek(mark)
     }
+
+    override fun skip(n: Long): Long {
+        return randomAccessFile.skipBytes(n.toInt()).toLong()
+    }
 }
