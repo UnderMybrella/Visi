@@ -173,3 +173,5 @@ infix fun IntArray.asBase(base: Int): String = this.joinToString(" ") { byte ->
 
 operator fun <K, V> Map<K, V>.get(v: V): K? = getByValue(v)
 fun <K, V> Map<K, V>.getByValue(v: V): K? = entries.firstOrNull { (_, value) -> value == v }?.key
+
+operator fun <T> List<T>.get(index: Int, default: T): T = if(index < size) this[index] else default
