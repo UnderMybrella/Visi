@@ -54,6 +54,12 @@ class ByteArrayIOStream {
                 override fun pipe(out: OutputStream) = out.write(toByteArray())
             }
 
+    val position: Int
+        get() = pos
+
+    val size: Int
+        get() = buffer.size
+
     fun read(): Int = buffer[pos++, -1].toInt() and 0xFF
     fun read(bytes: ByteArray): Int {
         for (i in 0 until bytes.size) {
