@@ -12,7 +12,7 @@ open class ClassBuilder<T: Any>(val constructor: KFunction<T>) {
     constructor(clazz: KClass<T>) : this(clazz.constructors.first())
 
     init {
-        parameters.putAll(constructor.parameters.map { param -> Pair(param, Optional.empty<Any>()) })
+        parameters.putAll(constructor.parameters.map { param -> param to null })
     }
 
     fun put(parameterName: String, value: Any) = set(parameterName, value)
@@ -20,15 +20,15 @@ open class ClassBuilder<T: Any>(val constructor: KFunction<T>) {
     operator fun set(parameterName: String, value: Any) {
         val parameter = parameters.keys.firstOrNull { parameter -> parameter.name ?: "" == parameterName } ?: return
         if (parameter.type.classifier == value::class) {
-            parameters[parameter] = value.asOptional()
+            parameters[parameter] = value
         } else
             throw IllegalArgumentException("$value is an invalid value for $parameterName (Expected ${parameter.type.classifier}, was given ${value::class})")
     }
 
     fun build(): T {
-        if(parameters.filter { (key) -> !key.isOptional }.any { (_, value) -> value != null })
+        if(parameters.filter { (key) -> !key.isOptional && !key.type.isMarkedNullable }.any { (_, value) -> value == null })
             throw IllegalStateException("Not all required parameters have associated values! Still missing ${parameters.keys.filter { key -> !key.isOptional }.joinToString()}")
-        return constructor.callBy(parameters.filterValues(Objects::nonNull))
+        return constructor.callBy(parameters)
     }
 
     operator fun invoke(): T = build()
