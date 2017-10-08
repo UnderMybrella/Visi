@@ -18,7 +18,7 @@ interface DataSource {
     
     fun <T> use(action: (InputStream) -> T): T = inputStream.use(action)
     fun <T> seekableUse(action: (InputStream) -> T): T = inputStream.use(action)
-    fun pipe(out: OutputStream): Unit { use { it.writeTo(out) } }
+    fun pipe(out: OutputStream): Unit = use { it.writeTo(out) }
 }
 
 class FileDataSource(val file: File) : DataSource {
@@ -33,7 +33,8 @@ class FileDataSource(val file: File) : DataSource {
     override val seekableInputStream: InputStream
         get() = RandomAccessFileInputStream(file)
 
-    override val size: Long = file.length()
+    override val size: Long
+        get() = file.length()
 }
 
 class HTTPDataSource(val url: URL, val userAgent: String) : DataSource {
@@ -130,5 +131,6 @@ class InputStreamDataSource(val stream: InputStream) : DataSource {
     override val inputStream: InputStream = stream
     override val seekableInputStream: InputStream = stream
 
-    override val size: Long = stream.available().toLong()
+    override val size: Long
+        get() = stream.available().toLong()
 }

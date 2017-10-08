@@ -153,8 +153,6 @@ fun <T> Array<T>.toSequentialString(separator: String = ", ", finalSeparator: St
     return str
 }
 
-fun byteArrayOf(vararg bytes: Int): ByteArray = bytes.map { it.toByte() }.toByteArray()
-
 infix fun ByteArray.asBase(base: Int): String = this.joinToString(" ") { byte ->
     when(base) {
         2 -> "0b${byte.toString(2)}"

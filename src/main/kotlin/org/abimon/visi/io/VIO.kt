@@ -8,23 +8,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.reflect.KClass
 
-fun InputStream.readPartialBytes(len: Int, bufferSize: Int = 8192): ByteArray {
-    val baos = ByteArrayOutputStream()
-    val buffer = ByteArray(bufferSize)
-    var read = 0
-    var total = 0
-
-    while (read > -1 && total < len) {
-        read = read(buffer, 0, bufferSize.coerceAtMost(len - total))
-        if(read < 0)
-            break
-
-        baos.write(buffer, 0, read)
-        total += read
-    }
-
-    return baos.toByteArray()
-}
+fun InputStream.readPartialBytes(len: Int): ByteArray = ByteArray(len).apply { this@readPartialBytes.read(this@apply) }
 
 fun InputStream.readChunked(bufferSize: Int = 8192, closeAfter: Boolean = true, processChunk: (ByteArray) -> Unit): Int {
     val buffer = ByteArray(bufferSize)
