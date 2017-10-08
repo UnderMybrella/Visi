@@ -17,7 +17,7 @@ interface DataSource {
     val size: Long
     
     fun <T> use(action: (InputStream) -> T): T = inputStream.use(action)
-    fun <T> seekableUse(action: (InputStream) -> T): T = inputStream.use(action)
+    fun <T> seekableUse(action: (InputStream) -> T): T = seekableInputStream.use(action)
     fun pipe(out: OutputStream): Unit = use { it.writeTo(out) }
 }
 
