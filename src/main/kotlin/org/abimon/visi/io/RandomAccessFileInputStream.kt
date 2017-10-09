@@ -25,6 +25,20 @@ open class RandomAccessFileInputStream(file: File): InputStream() {
     }
 
     override fun skip(n: Long): Long {
-        return randomAccessFile.skipBytes(n.toInt()).toLong()
+        val pos: Long = randomAccessFile.getFilePointer()
+        val len: Long = randomAccessFile.length()
+        var newpos: Long
+
+        if (n <= 0)
+            return 0
+
+        newpos = pos + n
+        if (newpos > len)
+            newpos = len
+
+        randomAccessFile.seek(newpos)
+
+        /* return the actual number of bytes skipped */
+        return newpos - pos
     }
 }
