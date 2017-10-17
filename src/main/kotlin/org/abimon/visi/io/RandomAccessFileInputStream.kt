@@ -25,7 +25,7 @@ open class RandomAccessFileInputStream(file: File): InputStream() {
     }
 
     override fun skip(n: Long): Long {
-        val pos: Long = randomAccessFile.getFilePointer()
+        val pos: Long = randomAccessFile.filePointer
         val len: Long = randomAccessFile.length()
         var newpos: Long
 
