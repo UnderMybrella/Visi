@@ -2,12 +2,10 @@ group 'org.abimon'
 version '0.1'
 
 buildscript {
-    ext.kotlin_version = '1.2.0-rc-39'
+    ext.kotlin_version = '1.2.0'
 
     repositories {
         mavenCentral()
-        maven { url 'https://jitpack.io' }
-        maven { url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2' }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -22,8 +20,6 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
-    maven { url 'https://jitpack.io' }
-    maven { url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2' }
 }
 
 dependencies {
