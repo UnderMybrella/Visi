@@ -3,6 +3,7 @@ package org.abimon.visi.io
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
+import java.nio.channels.Channels
 import java.util.*
 import java.util.function.Supplier
 
@@ -18,11 +19,10 @@ interface DataSource {
     
     fun <T> use(action: (InputStream) -> T): T = inputStream.use(action)
     fun <T> seekableUse(action: (InputStream) -> T): T = seekableInputStream.use(action)
-    fun pipe(out: OutputStream): Unit = use { it.writeTo(out) }
+    fun pipe(out: OutputStream): Unit = use { it.copyTo(out) }
 }
 
 class FileDataSource(val file: File) : DataSource {
-
     override val location: String = file.absolutePath
 
     override val data: ByteArray
@@ -31,7 +31,7 @@ class FileDataSource(val file: File) : DataSource {
     override val inputStream: InputStream
         get() = FileInputStream(file)
     override val seekableInputStream: InputStream
-        get() = RandomAccessFileInputStream(file)
+        get() = Channels.newInputStream(RandomAccessFile(file, "r").channel)
 
     override val size: Long
         get() = file.length()
@@ -43,11 +43,7 @@ class HTTPDataSource(val url: URL, val userAgent: String) : DataSource {
     override val location: String = url.toExternalForm()
 
     override val data: ByteArray
-        get() {
-            val baos = ByteArrayOutputStream()
-            use { it.writeTo(baos, 8192, true) }
-            return baos.toByteArray()
-        }
+        get() = use { stream -> stream.readBytes() }
 
     override val inputStream: InputStream
         get() {
@@ -65,14 +61,8 @@ class HTTPDataSource(val url: URL, val userAgent: String) : DataSource {
             val stream = if (http.responseCode < 400) http.inputStream else http.errorStream
             val tmp = File.createTempFile(UUID.randomUUID().toString(), "tmp")
             tmp.deleteOnExit()
-            FileOutputStream(tmp).use { out -> stream.use { inStream -> inStream.writeTo(out) } }
-
-            return object: RandomAccessFileInputStream(tmp) {
-                override fun close() {
-                    super.close()
-                    tmp.delete()
-                }
-            }
+            FileOutputStream(tmp).use { out -> stream.use { inStream -> inStream.copyTo(out) } }
+            return Channels.newInputStream(RandomAccessFile(tmp, "r").channel)
         }
 
     override val size: Long
