@@ -8,7 +8,8 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.reflect.KClass
 
-fun InputStream.readPartialBytes(len: Int): ByteArray = ByteArray(len.coerceAtLeast(0)).apply { this@readPartialBytes.read(this@apply) }
+@Deprecated("Use the other read function instead", replaceWith = ReplaceWith("read(len)"))
+fun InputStream.readPartialBytes(len: Int): ByteArray = read(len)
 
 fun InputStream.readChunked(bufferSize: Int = 8192, closeAfter: Boolean = true, processChunk: (ByteArray) -> Unit): Int {
     val buffer = ByteArray(bufferSize)
@@ -36,38 +37,37 @@ fun InputStream.readChunked(bufferSize: Int = 8192, closeAfter: Boolean = true, 
     return total
 }
 
+@Deprecated("Use the Kotlin builtin instead", ReplaceWith("readBytes()"))
+fun InputStream.readAllBytes(): ByteArray = readBytes()
 
-fun InputStream.readAllBytes(): ByteArray {
-    val data = ByteArrayOutputStream()
-    writeTo(data)
-    return data.toByteArray()
-}
+@Deprecated("Use the Kotlin builtin instead", ReplaceWith("copyTo(writingTo, bufferSize)"))
+fun InputStream.writeTo(writingTo: OutputStream, bufferSize: Int = 8192, closeAfter: Boolean = true): Int = copyTo(writingTo, bufferSize).toInt()
 
-fun InputStream.writeTo(writingTo: OutputStream, bufferSize: Int = 8192, closeAfter: Boolean = true): Int {
-    val buffer = ByteArray(bufferSize)
-    var read = 0
-    var total = 0
-    var count = 0.toByte()
-
-    while (read > -1) {
-        read = read(buffer)
-        if(read < 0)
-            break
-        if(read == 0) {
-            count++
-            if(count > 3)
-                break
-        }
-
-        writingTo.write(buffer, 0, read)
-        total += read
-    }
-
-    if(closeAfter)
-        close()
-
-    return total
-}
+//{
+//    val buffer = ByteArray(bufferSize)
+//    var read = 0
+//    var total = 0
+//    var count = 0.toByte()
+//
+//    while (read > -1) {
+//        read = read(buffer)
+//        if(read < 0)
+//            break
+//        if(read == 0) {
+//            count++
+//            if(count > 3)
+//                break
+//        }
+//
+//        writingTo.write(buffer, 0, read)
+//        total += read
+//    }
+//
+//    if(closeAfter)
+//        close()
+//
+//    return total
+//}
 
 fun InputStream.check(inputStream: InputStream): Boolean {
     use {
@@ -139,6 +139,7 @@ fun question(message: Any?, answer: (String) -> Boolean): Boolean {
 }
 
 fun question(message: Any?, answer: Any?): Boolean = question(message, { input -> input == answer })
+fun question(message: Any?, answer: String): Boolean = question(message, { input -> input.equals(answer, true) })
 
 fun iterateAll(): List<File> {
     val executor = Executors.newFixedThreadPool(1024)
