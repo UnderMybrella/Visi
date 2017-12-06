@@ -31,7 +31,7 @@ class FileDataSource(val file: File) : DataSource {
     override val inputStream: InputStream
         get() = FileInputStream(file)
     override val seekableInputStream: InputStream
-        get() = Channels.newInputStream(RandomAccessFile(file, "r").channel)
+        get() = RandomAccessFileInputStream(file)
 
     override val size: Long
         get() = file.length()

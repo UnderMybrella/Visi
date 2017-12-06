@@ -4,7 +4,6 @@ import java.io.File
 import java.io.InputStream
 import java.io.RandomAccessFile
 
-@Deprecated("Use Java builtins", replaceWith = ReplaceWith("Channels.newInputStream(RandomAccessFile(file, \"r\").channel)"))
 open class RandomAccessFileInputStream(file: File): InputStream() {
     private val randomAccessFile: RandomAccessFile = RandomAccessFile(file, "r")
     private var mark: Long = 0
