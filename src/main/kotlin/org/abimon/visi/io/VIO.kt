@@ -161,7 +161,7 @@ fun iterateAll(): List<File> {
 fun InputStream.read(count: Int): ByteArray {
     val data = ByteArray(count)
     val read = read(data)
-    return data.copyOfRange(0, read)
+    return data.copyOfRange(0, read.coerceAtLeast(0))
 }
 
 fun loadResource(name: String, resourcesDir: File = File("src${File.separator}main${File.separator}resources${File.separator}")): ByteArray? = Thread.currentThread().stackTrace[2]::class.loadResource(name, resourcesDir)
